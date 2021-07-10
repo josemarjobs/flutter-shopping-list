@@ -80,7 +80,7 @@ class ItemListController extends StateNotifier<AsyncValue<List<Item>>> {
         itemId: itemId,
       );
       state.whenData((items) =>
-          state = AsyncValue.data(items..retainWhere((i) => i.id == itemId)));
+          state = AsyncValue.data(items..removeWhere((i) => i.id == itemId)));
     } on CustomException catch (e, st) {
       _read(itemListExceptionProvider).state = e;
     }
