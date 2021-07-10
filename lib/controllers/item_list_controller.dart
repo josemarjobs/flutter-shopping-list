@@ -4,6 +4,29 @@ import 'package:flutter_shopping_list/models/item_model.dart';
 import 'package:flutter_shopping_list/repositories/item_repository.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+enum ItemListFilter { all, obtained }
+
+final itemListFilterProvider = StateProvider<ItemListFilter>(
+  (_) => ItemListFilter.all,
+);
+
+final filteredItemListProviderProvider = Provider<List<Item>>((ref) {
+  final itemListFilterState = ref.watch(itemListFilterProvider).state;
+  final itemListState = ref.watch(itemListControllerProvider);
+
+  return itemListState.maybeWhen(
+    data: (items) {
+      switch (itemListFilterState) {
+        case ItemListFilter.obtained:
+          return items.where((i) => i.obtained).toList();
+        default:
+          return items;
+      }
+    },
+    orElse: () => [],
+  );
+});
+
 final itemListExceptionProvider = StateProvider<CustomException?>((_) => null);
 
 final itemListControllerProvider =

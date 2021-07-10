@@ -38,6 +38,8 @@ class HomeScreen extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final user = useProvider(authControllerProvider);
+    final itemListFilter = useProvider(itemListFilterProvider);
+    final isObtainedFilterOn = itemListFilter.state == ItemListFilter.obtained;
 
     return Scaffold(
       appBar: AppBar(
@@ -49,6 +51,18 @@ class HomeScreen extends HookWidget {
                 icon: const Icon(Icons.logout),
               )
             : null,
+        actions: [
+          IconButton(
+            icon: Icon(
+              isObtainedFilterOn
+                  ? Icons.check_circle
+                  : Icons.check_circle_outline,
+            ),
+            onPressed: () => itemListFilter.state = isObtainedFilterOn
+                ? ItemListFilter.all
+                : ItemListFilter.obtained,
+          ),
+        ],
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => AddItemDialog.show(context, Item.empty()),
@@ -143,9 +157,14 @@ class ItemList extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final itemListState = useProvider(itemListControllerProvider);
+    final filteredItems = useProvider(filteredItemListProviderProvider);
 
     return itemListState.when(
-      data: (items) => items.isEmpty ? _emptyItems() : _listItems(items),
+      data: (items) => items.isEmpty
+          ? _emptyItems()
+          : _listItems(
+              filteredItems,
+            ),
       loading: () => Center(child: CircularProgressIndicator()),
       error: (err, _) => ItemListError(
         message: err is CustomException ? err.message! : 'Something went wrong',
