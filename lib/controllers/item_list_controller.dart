@@ -4,6 +4,8 @@ import 'package:flutter_shopping_list/models/item_model.dart';
 import 'package:flutter_shopping_list/repositories/item_repository.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+final itemListExceptionProvider = StateProvider<CustomException?>((_) => null);
+
 final itemListControllerProvider =
     StateNotifierProvider<ItemListController, AsyncValue<List<Item>>>(
   (ref) {
@@ -16,7 +18,11 @@ class ItemListController extends StateNotifier<AsyncValue<List<Item>>> {
   final Reader _read;
   final String? _userId;
 
-  ItemListController(this._read, this._userId) : super(AsyncValue.loading());
+  ItemListController(this._read, this._userId) : super(AsyncValue.loading()) {
+    if (_userId != null) {
+      retrieveItems();
+    }
+  }
 
   Future<void> retrieveItems({bool isRefreshing = false}) async {
     if (isRefreshing) state = AsyncValue.loading();
@@ -28,6 +34,55 @@ class ItemListController extends StateNotifier<AsyncValue<List<Item>>> {
       }
     } on CustomException catch (e, st) {
       state = AsyncValue.error(e, st);
+    }
+  }
+
+  Future<void> addItem({required String name, bool obtained = false}) async {
+    try {
+      final item = Item(name: name, obtained: obtained);
+      final itemId = await _read(itemRepositoryProvider)
+          .createItem(userId: _userId!, item: item);
+
+      state.whenData(
+        (items) => state = AsyncValue.data(
+          items
+            ..add(
+              item.copyWith(id: itemId),
+            ),
+        ),
+      );
+    } on CustomException catch (e, st) {
+      _read(itemListExceptionProvider).state = e;
+    }
+  }
+
+  Future<void> updateItem({required Item updatedItem}) async {
+    try {
+      await _read(itemRepositoryProvider).updateItem(
+        userId: _userId!,
+        item: updatedItem,
+      );
+      state.whenData((items) {
+        state = AsyncValue.data([
+          for (final i in items)
+            if (i.id == updatedItem.id) updatedItem else i
+        ]);
+      });
+    } on CustomException catch (e, st) {
+      _read(itemListExceptionProvider).state = e;
+    }
+  }
+
+  Future<void> deleteItem({required String itemId}) async {
+    try {
+      await _read(itemRepositoryProvider).deleteItem(
+        userId: _userId!,
+        itemId: itemId,
+      );
+      state.whenData((items) =>
+          state = AsyncValue.data(items..retainWhere((i) => i.id == itemId)));
+    } on CustomException catch (e, st) {
+      _read(itemListExceptionProvider).state = e;
     }
   }
 }
