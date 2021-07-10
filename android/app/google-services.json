@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "386382145438",
+    "project_id": "fir-shopping-list-e0163",
+    "storage_bucket": "fir-shopping-list-e0163.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:386382145438:android:c16e90dc82cbbbd25e188f",
+        "android_client_info": {
+          "package_name": "dev.josemarjobs.flutter_shopping_list"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "386382145438-kij0j8areq4lhubfs1er090sesp11gnc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBjhsNri4VJtH3vkXrc1QMGP0wGMdX85O4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "386382145438-kij0j8areq4lhubfs1er090sesp11gnc.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
