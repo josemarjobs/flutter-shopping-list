@@ -124,7 +124,7 @@ class AddItemDialog extends HookWidget {
                         ? Colors.orange
                         : Theme.of(context).primaryColor),
                 onPressed: () {
-                  if(item.name.isEmpty) {
+                  if(textController.text.isEmpty) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         backgroundColor: Theme.of(context).primaryColor,
