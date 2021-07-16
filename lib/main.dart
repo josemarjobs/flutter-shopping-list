@@ -124,6 +124,16 @@ class AddItemDialog extends HookWidget {
                         ? Colors.orange
                         : Theme.of(context).primaryColor),
                 onPressed: () {
+                  if(textController.text.isEmpty) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        backgroundColor: Theme.of(context).primaryColor,
+                        duration: const Duration(seconds: 2),
+                        content: const Text('Items must have a name.')
+                      )
+                    );
+                    return;
+                  }
                   isUpdating
                       ? context
                           .read(itemListControllerProvider.notifier)
